@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,16 +66,27 @@ public class DoodleView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(bitmap, 0, 0, paintScreen);
-        int A = (int)(Math.random()*256);
-        int R = (int)(Math.random()*256);
-        int G = (int)(Math.random()*256);
-        int B = (int)(Math.random()*256);
-        setDrawingColor(Color.argb(A, R, G, B));
-        for (Integer key: pathMap.keySet()) {
-            canvas.drawPath(pathMap.get(key), paintLine);
-        }
+        canvas.drawCircle(getWidth()/4, getHeight()/4, 300, paintLine);
+        canvas.drawRect(getWidth()/2+100, getHeight()/2+100, getWidth()-100, getHeight()-400, paintLine);
+        canvas.drawRect(getWidth()/4-300, getHeight()/2+100, getWidth()/2, getHeight()/4*3+100, paintLine);
+        drawTriangle(canvasBitmap, paintLine, getWidth()/4*3, getHeight()/4, 600);
     }
 
+    public void drawTriangle(Canvas canvas, Paint paint, int x, int y, int width) {
+        int halfWidth = width / 2;
+
+        Path path = new Path();
+        path.moveTo(x, y - halfWidth); // Top
+        path.lineTo(x - halfWidth, y + halfWidth); // Bottom left
+        path.lineTo(x + halfWidth, y + halfWidth); // Bottom right
+        path.lineTo(x, y - halfWidth); // Back to Top
+        path.close();
+
+        canvas.drawPath(path, paint);
+    }
+
+
+/*
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
@@ -161,6 +175,6 @@ public class DoodleView extends View {
         path.moveTo(x, y);
         point.x = (int) x;
         point.y = (int) y;
-    }
+    }*/
 }
 
