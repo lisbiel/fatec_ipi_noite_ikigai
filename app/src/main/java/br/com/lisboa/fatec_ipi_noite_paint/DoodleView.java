@@ -81,16 +81,68 @@ public class DoodleView extends View {
 
         if( action == MotionEvent.ACTION_DOWN ||
                                 action == MotionEvent.ACTION_POINTER_DOWN) {
+            touchStarted(
+                    event.getX(actionIndex),
+                    event.getY(actionIndex),
+                    event.getPointerId(actionIndex)
+            );
 
         } else if(action == MotionEvent.ACTION_UP ||
                         action == MotionEvent.ACTION_POINTER_UP) {
-
-
+            touchEnded (event.getPointerId(actionIndex));
         } else {
-
+            touchMoved(event);
         }
         invalidate();
         return true;
+    }
+
+    private void
+    touchEnded (
+            int
+                    lineID){
+        Path path =
+                pathMap
+                        .get(lineID);
+        canvasBitmap.drawPath(path, paintLine);
+        path.reset();
+    }
+
+    private void
+    touchMoved (MotionEvent event){
+        for (int i = 0; i < event.getPointerCount(); i++){
+            int
+                    pointerID = event.getPointerId(i);
+            int
+                    pointerIndex = event.findPointerIndex(pointerID);
+            if
+            (
+                    pathMap
+                            .containsKey(pointerID)){
+                float
+                        newX = event.getX(pointerIndex);
+                float
+                        newY = event.getY(pointerIndex);
+                Path path =
+                        pathMap
+                                .get(pointerID);
+                Point point =
+                        previousPointMap
+                                .get(pointerID);
+                float deltaX = Math.abs(newX - point.x);
+                float deltaY = Math.abs(newY - point.y);
+                if
+                (deltaX >= TOUCH_TOLERANCE
+                        || deltaY >= TOUCH_TOLERANCE
+                ){
+                    path.quadTo(point.x, point.y,
+                            (newX + point.x) / 2,
+                            (newY + point.y) / 2
+                    );
+                    point.x = (int) newX;
+                    point.y = (int) newY;}
+            }
+        }
     }
 
     private void touchStarted (float x, float y, int lineID) {
@@ -99,7 +151,16 @@ public class DoodleView extends View {
         if(pathMap.containsKey(lineID)) {
             path = pathMap.get(lineID);
             path.reset();
+            point = previousPointMap.get(lineID);
+        } else {
+            path = new Path();
+            pathMap.put(lineID, path);
+            point = new Point();
+            previousPointMap.put(lineID, point);
         }
+        path.moveTo(x, y);
+        point.x = (int) x;
+        point.y = (int) y;
     }
 }
 

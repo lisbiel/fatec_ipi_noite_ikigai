@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml version="1.0" encoding="utf-8"?>
 <br.com.lisboa.fatec_ipi_noite_paint.DoodleView
     android:id="@+id/doodleView"
     xmlns:android="http://schemas.android.com/apk/res/android"
