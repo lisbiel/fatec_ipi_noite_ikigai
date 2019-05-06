@@ -18,7 +18,7 @@
         />
 
     <fragment
-        android:name="br.com.lisboa.fatec_ipi_noite_paint.MainActivityFragment"
+        android:name="br.com.lisboa.fatec_ipi_noite_ikigai.MainActivityFragment"
         android:id="@+id/doodleFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

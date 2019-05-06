@@ -1,4 +1,4 @@
-package br.com.lisboa.fatec_ipi_noite_paint;
+package br.com.lisboa.fatec_ipi_noite_ikigai;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("br.com.lisboa.fatec_ipi_noite_paint", appContext.getPackageName());
+        assertEquals("br.com.lisboa.fatec_ipi_noite_ikigai", appContext.getPackageName());
     }
 }

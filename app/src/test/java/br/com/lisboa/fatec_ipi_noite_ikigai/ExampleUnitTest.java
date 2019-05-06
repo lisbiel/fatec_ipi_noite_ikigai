@@ -1,4 +1,4 @@
-package br.com.lisboa.fatec_ipi_noite_paint;
+package br.com.lisboa.fatec_ipi_noite_ikigai;
 
 import org.junit.Test;
 

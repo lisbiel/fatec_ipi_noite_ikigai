@@ -1,4 +1,4 @@
-package br.com.lisboa.fatec_ipi_noite_paint;
+package br.com.lisboa.fatec_ipi_noite_ikigai;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,21 +10,28 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.Region;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
 
 public class DoodleView extends View {
 
     private static final int TOUCH_TOLERANCE = 10;
-
+    private static final int RADIUS = 450;
+    private static final int ALPHA = 255;
     private Paint paintLine;
     private Bitmap bitmap;
     private Canvas canvasBitmap;
     private Paint paintScreen;
+    private boolean isDrawn;
+    private Region region;
 
     private Map<Integer, Path> pathMap = new HashMap<>();
 
@@ -39,12 +46,15 @@ public class DoodleView extends View {
         paintLine.setStyle(Paint.Style.STROKE);
         paintLine.setStrokeWidth(5);
         paintLine.setStrokeCap(Paint.Cap.ROUND);
+        isDrawn = false;
+        setLayerType(LAYER_TYPE_HARDWARE, null);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         canvasBitmap = new Canvas(bitmap);
+        canvasBitmap.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         bitmap.eraseColor(Color.WHITE);
     }
 
@@ -65,24 +75,30 @@ public class DoodleView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawBitmap(bitmap, 0, 0, paintScreen);
-        canvas.drawCircle(getWidth()/4, getHeight()/4, 300, paintLine);
-        canvas.drawRect(getWidth()/2+100, getHeight()/2+100, getWidth()-100, getHeight()-400, paintLine);
-        canvas.drawRect(getWidth()/4-300, getHeight()/2+100, getWidth()/2, getHeight()/4*3+100, paintLine);
-        drawTriangle(canvasBitmap, paintLine, getWidth()/4*3, getHeight()/4, 600);
+        drawIkigai(canvas, paintLine);
     }
 
-    public void drawTriangle(Canvas canvas, Paint paint, int x, int y, int width) {
-        int halfWidth = width / 2;
+    public void drawIkigai(Canvas canvas, Paint paintLine) {
+        DisplayMetrics dm = new DisplayMetrics();
+        paintLine.setStyle(Paint.Style.FILL);
+        paintLine.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
+        randomizeColor(paintLine);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 4 + 350, RADIUS, paintLine);
+        randomizeColor(paintLine);
+        canvas.drawCircle(getWidth() / 4 * 3 - 100, getHeight() / 2, RADIUS, paintLine);
+        randomizeColor(paintLine);
+        canvas.drawCircle(getWidth() / 4 + 100, getHeight() / 2, RADIUS, paintLine);
+        randomizeColor(paintLine);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 4 * 3 - 350, RADIUS, paintLine);
+        isDrawn = true;
+    }
 
-        Path path = new Path();
-        path.moveTo(x, y - halfWidth); // Top
-        path.lineTo(x - halfWidth, y + halfWidth); // Bottom left
-        path.lineTo(x + halfWidth, y + halfWidth); // Bottom right
-        path.lineTo(x, y - halfWidth); // Back to Top
-        path.close();
-
-        canvas.drawPath(path, paint);
+    private void randomizeColor(Paint paintLine) {
+        Random random = new Random();
+        int r = random.nextInt(255);
+        int g = random.nextInt(255);
+        int b = random.nextInt(255);
+        paintLine.setColor(Color.argb(ALPHA, r, g, b));
     }
 
 
